@@ -1,18 +1,12 @@
+// src/components/Game.jsx
 /* eslint-disable default-case */
 import React, { useRef, useEffect, useState } from 'react';
 import style from './style.module.css';
 import * as THREE from 'three';
-import { useSwipeable } from 'react-swipeable';
 import Chicken from '../generators/Chicken';
-import Chick from '../generators/Chicken copy';
 import generateLanes from '../generators/generateLanes';
-import Lane from '../generators/Lane';
-import myReact from '../generators/Texts/myReact';
 import Restart from './Restart/Restart';
 import Score from './Score/Score';
-import About from './About/About';
-import Billboard from '../generators/Items/Billboard';
-import move from '../generators/Move';
 import addLane from '../generators/addLane';
 import initBillboards from '../generators/initBillboards';
 import initText from '../generators/initText';
@@ -23,129 +17,109 @@ export default function Game() {
     const [isDead, setIsDead] = useState(false);
     const [restart, setRestart] = useState(false);
     const [score, setScore] = useState(0)
-    const [about, setAbout] = useState(false)
-    let localIsDead = false;
-    let lanes;
-    const scene = new THREE.Scene();
-    const zoom = 2;
-    let chickenSize = 12;
-    let moves = [];
-    let chicken = new Chicken(zoom)
-    const distance = 500;
-    let height;
-    let cameraSpeed = 0.5;
-    let positionY;
-    let stepTime = 200;
-    const columns = 17;
-    let currentLane = 0;
-    let currentColumn = Math.floor(columns / 2);
-    let previousTimestamp;
-    let startMoving;
-    let stepStartTimestamp;
-    let vechicleColors;
-
-    const positionWidth = 42;
-    const boardWidth = positionWidth * columns;
-
-    const camera = new THREE.OrthographicCamera(
-      window.innerWidth / -2,
-      window.innerWidth / 2,
-      window.innerHeight / 2,
-      window.innerHeight / -2,
-      0.1,
-      10000
-  );
-
-  function soundClick() {
-    var audio = new Audio();
-    audio.src = './sounds/2j.wav';
-    audio.volume = 0.1;
-    audio.autoplay = true;
-  }
-
-  function coinAudio() {
-    const audio = new Audio();
-    audio.src = './sounds/coin.wav'
-    audio.volume = 0.1
-    audio.autoplay = true;
-  }
-
-  function loseAudio() {
-    const audio = new Audio();
-    audio.src = './sounds/lose.wav';
-    audio.volume = 0.1;
-    audio.autoplay = true;
-  }
-
-  if (isDead) {
-    loseAudio();
-  }
-
-  function aboutHandler() {
-    setAbout(!about);
-  }
-
-  function move(direction) {
-    const finalPositions = moves.reduce((position,move) => {
-      console.log(position, move)
-      if(move === 'forward') return {lane: position.lane + 1, column: position.column};
-      if(move === 'backward') return {lane: position.lane - 1, column: position.column};
-      if(move === 'left') return {lane: position.lane, column: position.column - 1};
-      if(move === 'right') return {lane: position.lane, column: position.column + 1};
-      return 
-    }, {lane: Number(currentLane), column: Number(currentColumn)})
-  
-    if (direction === 'forward') {
-      console.log({lanes, finalPositions})
-      if(lanes[finalPositions.lane+1]?.type === 'forest' && lanes[finalPositions.lane+1]?.occupiedPositions?.has(finalPositions.column)) return;
-      if(lanes[finalPositions.lane+1]?.type === 'forest2' && lanes[finalPositions.lane+1]?.occupiedPositions?.has(finalPositions.column)) return;
-      if(!stepStartTimestamp) startMoving = true;
-      addLane (scene, lanes, zoom, boardWidth, positionWidth, vechicleColors, height);
-    }
-    else if (direction === 'backward') {
-      if(finalPositions.lane === 0) return;
-      if(lanes[finalPositions.lane-1]?.type === 'forest' && lanes[finalPositions.lane-1]?.occupiedPositions?.has(finalPositions.column)) return;
-      if(lanes[finalPositions.lane-1]?.type === 'forest2' && lanes[finalPositions.lane-1]?.occupiedPositions?.has(finalPositions.column)) return;
-      if(!stepStartTimestamp) startMoving = true;
-    }
-    else if (direction === 'left') {
-      if(finalPositions.column === 0) return;
-      if(lanes[finalPositions.lane]?.type === 'forest' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column-1)) return;
-      if(lanes[finalPositions.lane]?.type === 'forest2' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column-1)) return;
-      if(!stepStartTimestamp) startMoving = true;
-    }
-    else if (direction === 'right') {
-      if(finalPositions.column === columns - 1 ) return;
-      if(lanes[finalPositions.lane]?.type === 'forest' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column+1)) return;
-      if(lanes[finalPositions.lane]?.type === 'forest2' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column+1)) return;
-      if(!stepStartTimestamp) startMoving = true;
-    }
-    moves.push(direction);
-    console.log(moves)
-  }
-
-  const moveForwardHandle = () => {
-    move('forward')
-    setScore(currentLane + 1)
-  }
-
-  // const handlers = useSwipeable({
-  //   onTap: moveForwardHandle,
-  //   onSwipedLeft: () => move('left'),
-  //   onSwipedRight: () => move('right'),
-  //   onSwipedDown: () => move('backward'),
-  //   swipeDuration: 300,
-  //   trackMouse: false,
-  //   preventScrollOnSwipe: true,
-  // })
-
-  // const refPassthrough = (el) => {
-  //   handlers.ref(el)
-
-  //   mountRef.current = el
-  // }
-
+    
     useEffect(() => {
+        let localIsDead = false;
+        let lanes;
+        const scene = new THREE.Scene();
+        const zoom = 2;
+        let chickenSize = 12;
+        let moves = [];
+        let chicken = new Chicken(zoom)
+        const distance = 500;
+        let height;
+        let cameraSpeed = 0.5;
+        let positionY;
+        let stepTime = 200;
+        const columns = 17;
+        let currentLane = 0;
+        let currentColumn = Math.floor(columns / 2);
+        let previousTimestamp;
+        let startMoving;
+        let stepStartTimestamp;
+        let vechicleColors;
+
+        const positionWidth = 42;
+        const boardWidth = positionWidth * columns;
+
+        const camera = new THREE.OrthographicCamera(
+          window.innerWidth / -2,
+          window.innerWidth / 2,
+          window.innerHeight / 2,
+          window.innerHeight / -2,
+          0.1,
+          10000
+      );
+
+      function soundClick() {
+        var audio = new Audio();
+        audio.src = './sounds/2j.wav';
+        audio.volume = 0.1;
+        audio.autoplay = true;
+      }
+
+      function coinAudio() {
+        const audio = new Audio();
+        audio.src = './sounds/coin.wav'
+        audio.volume = 0.1
+        audio.autoplay = true;
+      }
+
+      function loseAudio() {
+        const audio = new Audio();
+        audio.src = './sounds/lose.wav';
+        audio.volume = 0.1;
+        audio.autoplay = true;
+      }
+
+      if (isDead) {
+        loseAudio();
+      }
+
+      function move(direction) {
+        const finalPositions = moves.reduce((position,move) => {
+          console.log(position, move)
+          if(move === 'forward') return {lane: position.lane + 1, column: position.column};
+          if(move === 'backward') return {lane: position.lane - 1, column: position.column};
+          if(move === 'left') return {lane: position.lane, column: position.column - 1};
+          if(move === 'right') return {lane: position.lane, column: position.column + 1};
+          return position;
+        }, {lane: Number(currentLane), column: Number(currentColumn)})
+      
+        if (direction === 'forward') {
+          console.log({lanes, finalPositions})
+          if(lanes[finalPositions.lane+1]?.type === 'forest' && lanes[finalPositions.lane+1]?.occupiedPositions?.has(finalPositions.column)) return;
+          if(lanes[finalPositions.lane+1]?.type === 'forest2' && lanes[finalPositions.lane+1]?.occupiedPositions?.has(finalPositions.column)) return;
+          if(!stepStartTimestamp) startMoving = true;
+          addLane (scene, lanes, zoom, boardWidth, positionWidth, vechicleColors, height);
+        }
+        else if (direction === 'backward') {
+          if(finalPositions.lane === 0) return;
+          if(lanes[finalPositions.lane-1]?.type === 'forest' && lanes[finalPositions.lane-1]?.occupiedPositions?.has(finalPositions.column)) return;
+          if(lanes[finalPositions.lane-1]?.type === 'forest2' && lanes[finalPositions.lane-1]?.occupiedPositions?.has(finalPositions.column)) return;
+          if(!stepStartTimestamp) startMoving = true;
+        }
+        else if (direction === 'left') {
+          if(finalPositions.column === 0) return;
+          if(lanes[finalPositions.lane]?.type === 'forest' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column-1)) return;
+          if(lanes[finalPositions.lane]?.type === 'forest2' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column-1)) return;
+          if(!stepStartTimestamp) startMoving = true;
+        }
+        else if (direction === 'right') {
+          if(finalPositions.column === columns - 1 ) return;
+          if(lanes[finalPositions.lane]?.type === 'forest' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column+1)) return;
+          if(lanes[finalPositions.lane]?.type === 'forest2' && lanes[finalPositions.lane]?.occupiedPositions?.has(finalPositions.column+1)) return;
+          if(!stepStartTimestamp) startMoving = true;
+        }
+        moves.push(direction);
+        console.log(moves)
+      }
+
+      const moveForwardHandle = () => {
+        move('forward')
+        setScore(currentLane + 1)
+      }
+
         scene.background = new THREE.Color('#141517');
 
         vechicleColors = [0xa52523, 0xbdb638, 0x78b14b, 0x1a5b9c];
@@ -219,25 +193,25 @@ export default function Game() {
         initaliseValues();
 
           window.addEventListener("keydown", event => {
-            if (event.keyCode == '38' && localIsDead === false) {
+            if (event.keyCode === 38 && localIsDead === false) {
               // up arrow
               if (chicken.scale.z > 0.8) {
                   chicken.scale.z -= 0.2
               }
             }
-            else if (event.keyCode == '40' && localIsDead === false) {
+            else if (event.keyCode === 40 && localIsDead === false) {
               // down arrow
               if (chicken.scale.z > 0.8) {
                 chicken.scale.z -= 0.2
             }
             }
-            else if (event.keyCode == '37' && localIsDead === false) {
+            else if (event.keyCode === 37 && localIsDead === false) {
               // left arrow
               if (chicken.scale.z > 0.8) {
                 chicken.scale.z -= 0.2
             }
             }
-            else if (event.keyCode == '39' && localIsDead === false) {
+            else if (event.keyCode === 39 && localIsDead === false) {
               // right arrow
               if (chicken.scale.z > 0.8) {
                 chicken.scale.z -= 0.2
@@ -246,27 +220,25 @@ export default function Game() {
           });
 
           window.addEventListener("keyup", event => {
-            if (event.keyCode == '38' && localIsDead === false) {
+            if (event.keyCode === 38 && localIsDead === false) {
               chicken.scale.z = 1
-              // move('forward')
-              // console.log({scene, lanes, zoom, boardWidth, positionWidth, vechicleColors, height})
               moveForwardHandle()
               soundClick()
               cameraSpeed += 0.01;
             }
-            else if (event.keyCode == '40' && localIsDead === false) {
+            else if (event.keyCode === 40 && localIsDead === false) {
               //down arrow
               chicken.scale.z = 1
               soundClick()
               move('backward')
             }
-            else if (event.keyCode == '37' && localIsDead === false) {
+            else if (event.keyCode === 37 && localIsDead === false) {
               //left arrow
               chicken.scale.z = 1
               soundClick()
               move('left')
             }
-            else if (event.keyCode == '39' && localIsDead === false) {
+            else if (event.keyCode === 39 && localIsDead === false) {
               //right arrow
               chicken.scale.z = 1
               soundClick()
@@ -277,11 +249,6 @@ export default function Game() {
           const gameCanvas = document.querySelector('#game')
           const listener = SwipeListener(gameCanvas)
           console.log(listener)
-
-          // gameCanvas.addEventListener('touchend', function (e) {
-          //   moveForwardHandle()
-          //   soundClick()
-          // })
           
           gameCanvas.addEventListener('swipe', function (e) {
             var directions = e.detail.directions;
@@ -310,16 +277,6 @@ export default function Game() {
               move('backward')
             }
           })
-
-          // let lastY = 1;
-          // document.addEventListener("touchmove", function (event) {
-          //   const lastS = document.documentElement.scrollTop;
-          //   if(lastS == 0 && (lastY-event.touches[0].clientY)<0 && event.cancelable){
-          //     event.preventDefault(); 
-          //     event.stopPropagation();
-          //   }
-          //   lastY = event.touches[0].clientY;
-          // },{passive: false});
 
         const renderer = new THREE.WebGLRenderer({
             alpha: true,
@@ -532,7 +489,6 @@ export default function Game() {
                   coin.position.z = -30
                   coin.position.x = 2000
                   coinAudio()
-                  // setScore((prev) => prev + 3)
             }
           }
 
@@ -552,7 +508,6 @@ export default function Game() {
               coin.position.z = -30
               coin.position.x = 2000
               coinAudio()
-              // setScore((prev) => prev + 3)
           }
         }
 
@@ -577,7 +532,7 @@ export default function Game() {
               const chickenMinX = chicken.position.x - chickenSize*zoom/2;
               const chickenMaxX = chicken.position.x + chickenSize*zoom/2;
 
-              holes.forEach((hole, index) => {
+              holes.forEach((hole) => {
                 const holeMinX = hole[0];
                 const holeMaxX = hole[1];
                 if (chickenMaxX > holeMinX && chickenMinX < holeMaxX && holeMaxX !== holeMinX) {
@@ -610,7 +565,7 @@ export default function Game() {
                 [raftsArr[3] + 60, 672],
               ];
 
-              holes.forEach((hole, index) => {
+              holes.forEach((hole) => {
                 const holeMinX = hole[0];
                 const holeMaxX = hole[1];
                 if (chickenMaxX > holeMinX && chickenMinX < holeMaxX) {
@@ -627,7 +582,6 @@ export default function Game() {
                 if(chickenMaxX > raftMinX && chickenMinX < raftMaxX) {
                     chicken.position.x = raft.position.x
                     currentColumn = 17 - Math.round(( 1428 - (672 + chicken.position.x))/84)
-                    // camera.position.x = (chicken.position.x)
                     dirLight.position.x = (chicken.position.x - 100)
                     if (chicken.position.x > 672 || chicken.position.x < -672) {
                       localIsDead = true;
@@ -659,16 +613,14 @@ export default function Game() {
         requestAnimationFrame( animate );
 
         renderer.render(scene, camera);
-    }, [restart]);
+    }, [restart, isDead, setScore]);
+
 
     return (
         <>
             <div id='game' className={style.game} ref={mountRef} />
             <div className={style.scoreBox}>
               <Score score={score}/>
-            </div>
-            <div className={style.aboutButtonBox}>
-              <button className={style.aboutBtn} onClick={aboutHandler}>About me</button>
             </div>
             {isDead === true && restart === false ? (
                 <>
@@ -678,16 +630,6 @@ export default function Game() {
                     </div>
                 </>
             ) : null}
-            {
-              about === true ?
-              (
-                <>
-                  <About setAbout={setAbout} about={about}/>
-                </>
-              ) : (
-                null
-              )
-            }
         </>
     );
 }

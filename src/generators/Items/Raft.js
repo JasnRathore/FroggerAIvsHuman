@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 
 export default function Raft(zoom, positionWidth) {
-    let random = Math.floor(2 + Math.random() * 3);
-
     const raft = new THREE.Mesh(
         new THREE.BoxBufferGeometry(
             42 * zoom,

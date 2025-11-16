@@ -1,6 +1,6 @@
 import myReact from "./Texts/myReact"
 
-export default function (scene, zoom, boardWidth) {
+export default function initText(scene, zoom, boardWidth) {
     const text = new myReact('Hi, my name is Anton Atangulov')
     text.position.z = 2
     text.position.x = (-boardWidth/2) * zoom + 100
