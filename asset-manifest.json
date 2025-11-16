@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/FroggerAIvsHuman/static/css/main.1806427a.css",
-    "main.js": "/FroggerAIvsHuman/static/js/main.8f959724.js",
+    "main.js": "/FroggerAIvsHuman/static/js/main.58f535bb.js",
     "static/js/787.e058ae7c.chunk.js": "/FroggerAIvsHuman/static/js/787.e058ae7c.chunk.js",
     "index.html": "/FroggerAIvsHuman/index.html",
     "main.1806427a.css.map": "/FroggerAIvsHuman/static/css/main.1806427a.css.map",
-    "main.8f959724.js.map": "/FroggerAIvsHuman/static/js/main.8f959724.js.map",
+    "main.58f535bb.js.map": "/FroggerAIvsHuman/static/js/main.58f535bb.js.map",
     "787.e058ae7c.chunk.js.map": "/FroggerAIvsHuman/static/js/787.e058ae7c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1806427a.css",
-    "static/js/main.8f959724.js"
+    "static/js/main.58f535bb.js"
   ]
 }
