@@ -9,7 +9,6 @@ import Restart from './Restart/Restart';
 import Score from './Score/Score';
 import addLane from '../generators/addLane';
 import initBillboards from '../generators/initBillboards';
-import initText from '../generators/initText';
 import SwipeListener from 'swipe-listener';
 
 export default function Game() {
@@ -168,7 +167,6 @@ export default function Game() {
         camera.position.x = initialCameraPositionX;
         camera.position.z = distance;
 
-        initText(scene, zoom, boardWidth, )
 
         const initaliseValues = () => {
             lanes = generateLanes(zoom, boardWidth, positionWidth, scene, vechicleColors, height);
